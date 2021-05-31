@@ -11,17 +11,9 @@ from time import sleep
 import sqlite3 as sl
 
 class SQL_Controller:
-    def __init__(self):
+    def __init__(self, db):
         # db schema
-        self.db = {
-            'name': 'Users',
-            'path': "users.db", 
-            'columns': [
-                {'name':'id', 'type': 'INTEGER'}, 
-                {'name':'username', 'type': 'TEXT'}, 
-                {'name':'status', 'type': 'TEXT'}
-            ]
-        }
+        self.db = db
         # create db if not exist in path
         if not os.path.exists(self.db['path']):
             self._create_db(self.db)  
@@ -157,25 +149,3 @@ class SQL_Controller:
     def _swap(self, db, column, old, new):
         self._set(db, settings=[{'column':column, 'value': new, 'const': False}], location={'column': column, 'value': old, 'eq': True})
         self._set(db, settings=[{'column':column, 'value': old, 'const': False}], location={'column': column, 'value': new, 'eq': True})
-
-    ''' Examples '''
-    # add user to db
-    def add_user(self, id, username, status):
-        data = [id, username, status]
-        self._insert(self.db, data)
-
-    # get user by username
-    def get_user(self, username): 
-        return self._get(self.db, location={'column':'username', 'value': username, 'eq': True})
-
-    # get all users
-    def get_all_users(self):
-        return self._get(self.db)
-
-    # remove user
-    def remove_user(self, id):
-        self._remove(self.db, location={'column':'id', 'value': id, 'eq': True})
-
-    # remove all users
-    def clear_all_users(self):
-        self._remove(self.db)
